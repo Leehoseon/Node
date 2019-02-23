@@ -4,7 +4,7 @@ const app = express();
 const static = require('serve-static');
 const path = require('path');
 const router = express.Router();
-const ejs = require('ejs');
+
 const test_route = require('./route/route_1.js');
 
 app.set('port',3000);

@@ -2,17 +2,46 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const static = require('serve-static');
-const path = require('path');
 const router = express.Router();
 const ejs = require('ejs');
-const test_route = require('./route/route_1.js');
+const path = require('path');
+const express_session = require('express-session');
+const cookie_parser = require('cookie-parser');
+const body_parser = require('body-parser');
 
+/* server setting */
 app.set('port',3000);
+app.use('/public',static(path.join(__dirname,'public')));
 app.set('views', __dirname + '/views');
 app.set('view engine','ejs');
 
-app.use('/public',static(path.join(__dirname,'public')));
+app.use(express_session({
+    secret:'my key',
+    resave: true,
+    saveUninitialized: true
+}));
 
+app.use(cookie_parser());
+app.use(body_parser.urlencoded({extended:false}));
+app.use(body_parser.json());
+/* server setting */
+
+
+/* router mapping */
+const test_route = require('./route/route_1.js')(app);
+const cookie_route = require('./route/cookie.js')(app);
+const session_route = require('./route/session.js')(app);
+const photo_route = require('./route/photo.js')(app);
+
+app.use('/',router);
+app.use('/route',test_route);
+app.use('/session',session_route);
+app.use('/cookie',cookie_route);
+app.use('/photo',photo_route);
+/* router mapping */
+
+
+/* hello world */
 router.route('/').get(function(req,res){
     console.log('/ 요청');
     
@@ -20,11 +49,12 @@ router.route('/').get(function(req,res){
     res.write('<h1>Hello World</h1>');
     res.end();  
 });
+/* hello world */
 
-app.use('/',router);
-app.use('/route',test_route);
 
+/* server start */
 const server = http.createServer(app);
 server.listen(app.get('port'),()=>{
     console.log("http://localhost:%d", app.get('port'));
 })
+/* server start */
