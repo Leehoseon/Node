@@ -1,16 +1,30 @@
+const http = require('http');
 const express = require('express');
-const path = require('path');
 const app = express();
+const static = require('serve-static');
+const path = require('path');
+const router = express.Router();
+const ejs = require('ejs');
+const test_route = require('./route/route_1.js');
 
+app.set('port',3000);
+app.set('views', __dirname + '/views');
+app.set('view engine','ejs');
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use('/public',static(path.join(__dirname,'public')));
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+router.route('/').get(function(req,res){
+    console.log('/ 요청');
+    
+    res.writeHead(200,{'Content-type':'text/html;charset=utf-8'});
+    res.write('<h1>Hello World</h1>');
+    res.end();  
 });
-app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-app.listen(3000, () => {
-  console.log('Express App on port 8080!');
-});
+
+app.use('/',router);
+app.use('/route',test_route);
+
+const server = http.createServer(app);
+server.listen(app.get('port'),()=>{
+    console.log("http://localhost:%d", app.get('port'));
+})

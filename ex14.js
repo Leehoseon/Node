@@ -5,6 +5,7 @@ const static = require('serve-static');
 const path = require('path');
 const router = express.Router();
 const ejs = require('ejs');
+const test_route = require('./route/route_1.js');
 
 app.set('port',3000);
 app.set('views', __dirname + '/views');
@@ -19,14 +20,12 @@ router.route('/').get(function(req,res){
     req.app.render('test_loader',{},function(err,html){
         res.end(html);
     });
-    
-    
-    
     res.write('<h1>Hello World</h1>');
-    res.end();
+    res.end();  
 })
 
 app.use('/',router);
+app.use('/route',test_route);
 
 const server = http.createServer(app);
 server.listen(app.get('port'),()=>{
