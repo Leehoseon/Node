@@ -19,6 +19,9 @@ router.route('/').get(function(req,res){
     req.app.render('test_loader',{},function(err,html){
         res.end(html);
     });
+    
+    
+    
     res.write('<h1>Hello World</h1>');
     res.end();
 })
