@@ -8,6 +8,23 @@ const path = require('path');
 const express_session = require('express-session');
 const cookie_parser = require('cookie-parser');
 const body_parser = require('body-parser');
+const mongoClient = require('mongodb').MongoClient;
+
+/* db connect */
+var db;
+var db_url = "mongodb://localhost";
+function dbConnect(){
+    mongoClient.connect(db_url,function(err,client){
+        if(err){
+            console.log('db connect error');
+            return;
+        }
+        console.log('db connect success');
+        db = client.db('car');
+    })
+}
+dbConnect();
+/* db connect */
 
 /* server setting */
 app.set('port',3000);
@@ -32,12 +49,14 @@ const test_route = require('./route/route_1.js')(app);
 const cookie_route = require('./route/cookie.js')(app);
 const session_route = require('./route/session.js')(app);
 const photo_route = require('./route/photo.js')(app);
+const mongo_route = require('./route/mongojs.js')(app,db);
 
 app.use('/',router);
 app.use('/route',test_route);
 app.use('/session',session_route);
 app.use('/cookie',cookie_route);
 app.use('/photo',photo_route);
+app.use('/mongo',mongo_route);
 /* router mapping */
 
 
